@@ -16,7 +16,7 @@ export default defineSchema({
         amount: v.number(),
         category: v.optional(v.string()),
         date: v.number(),
-        paidByUserID: v.id("users"),
+        paidByUserId: v.id("users"),
         splitType: v.string(),
         splits: v.array(
             v.object({
@@ -43,5 +43,19 @@ export default defineSchema({
             })
         ),
     }),
+    settlements: defineTable({
+        amount: v.number(),
+        note: v.optional(v.string()),
+        date: v.number(),
+        paidByUserId: v.id("users"),
+        recievedByUserId: v.id("users"),
+        groupId: v.optional(v.id("groups")),
+        relatedExpenseIds: v.optional(v.array(v.id("expenses"))),
+        creratedBy: v.id("users"),
+    })
+        .index("by_group", ["groupId"])
+        .index("by_user_and_group", ["paidByUserId", "groupId"])
+        .index("by_reciever_and_group", ["recievedByUserId", "groupId"])
+        .index("ny_date", ["date"]),
 });
 
