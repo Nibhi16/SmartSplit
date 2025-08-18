@@ -1,5 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { FEATURES } from "@/lib/landing";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link"; 
@@ -52,6 +54,39 @@ export default function Home() {
 </div>
 
   </div>
+</section>
+<section id="features" className="bg-grey-50 py-20">
+  <div className="container mx-auto px-4 md:px-6 text-center space-y-6">
+    <Badge varient="outline" className="bg-blue-100 text-blue-900">
+            Features
+            </Badge>
+            <h1 className="bg-gradient-to-r from-blue-800 to-blue-950 bg-clip-text text-transparent text-3xl font-bold tracking-tight">
+    Expense splitting made simple.
+</h1>
+<p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto">
+  Our platform gives you everything you need to manage shared expenses effortlessly.
+</p>
+  </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
+  {FEATURES.map(({ title, Icon, bg, color, description }, idx) => (
+    <Card
+      key={idx}
+      className="p-6 rounded-2xl bg-white/70 backdrop-blur-lg shadow-lg border border-gray-100
+                 hover:shadow-[0_0_25px_rgba(59,130,246,0.7)] hover:scale-105 
+                 transition-all duration-300"
+    >
+      <div className={`rounded-xl p-4 ${bg} shadow-md`}>
+        <Icon className={`h-7 w-7 ${color}`} />
+      </div>
+      <h3 className="mt-4 text-lg font-bold text-gray-800 tracking-wide">{title}</h3>
+      <div className="w-16 h-1 mt-2 rounded-full bg-gradient-to-r from-pink-400 to-purple-500"></div>
+      <p className="mt-3 text-sm text-gray-600 leading-relaxed">{description}</p>
+    </Card>
+  ))}
+</div>
+
+
+
 </section>
       
 </div>
