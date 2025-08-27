@@ -1,7 +1,8 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { FEATURES, STEPS } from "@/lib/landing";
+import { Card, CardContent } from "@/components/ui/card";
+import { FEATURES, STEPS, TESTIMONIALS } from "@/lib/landing";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link"; 
@@ -105,7 +106,7 @@ export default function Home() {
     </p>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
       {STEPS.map(({description, label,title  }) => (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-center space-y-4" key= {title}>
       <div className="flex h-12 w-12 items-center justify-center rounded-full 
       bg-blue-100 text-xl font-bold text-blue-700">
         {label}</div>
@@ -116,7 +117,54 @@ export default function Home() {
   </div>
 </div>
 </section>
-      
+
+<section className=" bg-grey-50 py-20">
+  <div className="container mx-auto px-4 md:px-6 text-center space-y-6">
+    <Badge varient="outline" className="bg-blue-100 text-blue-900">
+        Testimonials
+    </Badge>
+    <h1 className="bg-gradient-to-r from-blue-800 to-blue-950 bg-clip-text
+    text-transparent text-3xl font-bold tracking-tight">
+         Insights from our users
+    </h1>
+   
+    <div className="grid grid-cols-1 mx-auto max-w-5xl md:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
+      {TESTIMONIALS.map(({quote, name, image, role  }) => (
+        <Card key={name}>
+          <CardContent className="space-y-4 p-6">
+            <p className="text-grey-500">{quote}</p>
+            <div className="flex items-center space-x-3">
+              <Avatar>
+              <AvatarImage src={image} alt={name} />
+                <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="text-left">
+                <p className="text-sm font-medium">{name}</p>
+                <p className="text-sm text-muted-foreground">{role}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>
+<section className="py-20 gradient">
+  <div className="container mx-auto px-4 md:px-6 text-center space-y-6">
+    <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl text-white">
+      Want to split smarter, not harder?
+    </h2>
+    <p className="mx-auto max-w-[600px] text-blue-100 md:text-xl/relaxed">
+      Trusted by thousands who split smarter every day.
+    </p>
+    <Button asChild size="lg" className="bg-blue-900 hover:opacity-90">
+      <Link href="/dashboard">
+        Get Started
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Link>
+    </Button>
+  </div>
+</section>
 </div>
   );
 }
