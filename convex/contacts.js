@@ -1,5 +1,6 @@
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { v } from "convex/values";
 
 export const getAllContacts = query({
     handler: async (ctx) => {
@@ -61,5 +62,36 @@ export const getAllContacts = query({
             users: contactUsers.filter(Boolean),
             groups: userGroups,
         };
+    },
+});
+
+export const createGroup=mutation({
+    args: {
+        name: v.string(),
+        description: v.optional(v.string()),
+        members: v.array(v.id("users")),
+    },
+    handler: async (ctx, args) => {
+        const currentUser =  await ctx.runQuery(internal.users.getCurrentUsers);
+
+        if(!args.name.trim()) throw new Error("Group name cannot be empty");
+        const uniqueMembers = new Set(args.members);
+        uniqueMembers.add(currentUser._id);
+        
+        for(const id of uniqueMembers){
+            if(!(await ctx.db.get(id)))
+                throw new Error(`User with ID ${id} not found`);
+        }
+
+        return await ctx.db.insert("groups", {
+            name: args.name.trim(),
+            description: args.description?.trim() ?? "",
+            createdBy: currentUser._id,
+            members:[...uniqueMembers].map((id) => ({
+                userId: id,
+                role: id === currentUser._id ? "admin" : "member",
+                joinedAt: Date.now(),
+            })),
+        });
     },
 });
