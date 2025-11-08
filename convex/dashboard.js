@@ -94,7 +94,7 @@ export const getSpendingStats = query({
     const userExpenses = expenses.filter(
       (expense) =>
         expense.paidByUserId === user._id ||
-        expense.splits.some((split) => split.userId === user._id)
+        expense.splits?.some((split) => split.userId === user._id)
     );
 
     const monthNames = [
