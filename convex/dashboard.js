@@ -80,7 +80,7 @@ export const getUserBalances = query({
   },
 });
 
-export const getSpendingStats = query({
+export const getTotalSpent = query({
   handler: async (ctx) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
     const currentYear = new Date().getFullYear();
@@ -97,14 +97,6 @@ export const getSpendingStats = query({
         expense.splits?.some((split) => split.userId === user._id)
     );
 
-    const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December",
-    ];
-
-    const monthlyTotals = {};
-    monthNames.forEach((m) => (monthlyTotals[m] = 0));
-
     let totalSpent = 0;
 
     userExpenses.forEach((expense) => {
@@ -112,19 +104,68 @@ export const getSpendingStats = query({
         (split) => split.userId === user._id
       );
       if (userSplit) {
-        const expenseDate = new Date(expense.date);
-        const monthIndex = expenseDate.getMonth();
-        const monthName = monthNames[monthIndex];
-        monthlyTotals[monthName] += userSplit.amount;
         totalSpent += userSplit.amount;
       }
     });
+    return totalSpent;
+  },
+});
 
-    return {
-      totalSpent,
-      monthlyTotals,
-      year: currentYear,
-    };
+export const getMonthlySpending = query({
+  handler: async (ctx) => {
+    const user = await ctx.runQuery(internal.users.getCurrentUser);
+
+    // Get current year and its start timestamp
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1).getTime();
+
+    // Get all expenses for current year
+    const allExpenses = await ctx.db
+      .query("expenses")
+      .withIndex("by_date", (q) => q.gte("date", startOfYear))
+      .collect();
+
+    const userExpenses = allExpenses.filter(
+      (expense) =>
+        expense.paidByUserId === user._id ||
+        expense.splits.some((split) => split.userId === user._id)
+    );
+
+    const monthlyTotals = {};
+
+    for (let i = 0; i < 12; i++) {
+      const monthDate = new Date(currentYear, i, 1);
+      monthlyTotals[monthDate.getTime()] = 0;
+    }
+
+    userExpenses.forEach((expense) => {
+      const date = new Date(expense.date);
+
+      const monthStart = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        1
+      ).getTime();
+
+      const userSplit = expense.splits.find(
+        (split) => split.userId === user._id
+      );
+
+      if (userSplit) {
+        monthlyTotals[monthStart] =
+          (monthlyTotals[monthStart] || 0) + userSplit.amount;
+      }
+    });
+    const result = Object.entries(monthlyTotals).map(([month, total]) => ({
+      month: parseInt(month),
+      total,
+    }));
+
+    // Sort by month (chronological order)
+    result.sort((a, b) => a.month - b.month);
+
+    return result;
+
   },
 });
 

@@ -6,15 +6,30 @@ import { api } from "@/convex/_generated/api";
 import { useConvexQuery } from "@/hooks/use-convex-query";
 import Link from "next/link";
 import { Plus, User, Users} from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BarLoader } from "react-spinners";
 import CreateGroupModal from "./_components/create-group-modal";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const ContactsPage =() => {
-    const [isCreateGroupModelOpen, setIsCreateGroupModelOpen] = useState(false);
+    const [isCreateGroupModelOpen, setIsCreateGroupModalOpen] = useState(false);
    const { data, isLoading } = useConvexQuery(api.contacts.getAllContacts, {});
    const router = useRouter();
+   const searchParams = useSearchParams()
+
+   useEffect(() => {
+  const createGroupParam = searchParams.get("createGroup");
+
+  if (createGroupParam === "true") {
+    setIsCreateGroupModalOpen(true);
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("createGroup");
+
+    router.replace(url.pathname + url.search);
+  }
+}, [searchParams, router]);
+
    if (isLoading) {
     return (
         <div className="container mx-auto py-12">
@@ -27,7 +42,7 @@ const ContactsPage =() => {
     <div className="container mx-auto py-6">
         <div className="flex items-center justify-between mb-6">
             <h1 className="text-5xl gradient-title"> Contacts</h1>
-            <Button onClick={() => setIsCreateGroupModelOpen(true)}>
+            <Button onClick={() => setIsCreateGroupModalOpen(true)}>
                 <Plus className="mr-2 h-4 w-4"/>
             Create Group
             </Button>
@@ -110,7 +125,7 @@ const ContactsPage =() => {
            </div>
         </div>
         <CreateGroupModal isOpen={isCreateGroupModelOpen}
-        onClose={()=>setIsCreateGroupModelOpen(false)}
+        onClose={()=>setIsCreateGroupModalOpen(false)}
         onSuccess={(groupId)=>router.push(`/groups/${groupId}`)}>
         </CreateGroupModal>
     </div>

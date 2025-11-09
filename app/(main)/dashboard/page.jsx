@@ -3,10 +3,13 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useConvexQuery } from "@/hooks/use-convex-query";
 import Link from "next/link";
-import { PlusCircle } from "lucide-react";
+import { ChevronRight, PlusCircle, Users } from "lucide-react";
 import React from "react";
 import { BarLoader } from "react-spinners";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import ExpenseSummary from "./components/expense-summary";
+import BalanceSummary from "./components/balance-summary";
+import GroupList from "./components/group-list";
 const DashboardPage = () => {
 
     const { data: balances, isLoading: balancesLoading } = useConvexQuery
@@ -15,16 +18,20 @@ const DashboardPage = () => {
     const { data: groups, isLoading: groupsLoading } = useConvexQuery
         (api.dashboard.getUserGroups);
 
-    const { data: spendingStats, isLoading: spendingStatsLoading } = useConvexQuery(
-        api.dashboard.getSpendingStats);
+    const { data: totalSpent, isLoading: totalSpentLoading } = useConvexQuery(
+        api.dashboard.getTotalSpent);
+
+    const { data: monthlySpending, isLoading: monthlySpendingLoading } = useConvexQuery
+        (api.dashboard.getMonthlySpending);    
 
     const isLoading =
         balancesLoading ||
         groupsLoading ||
-        spendingStatsLoading;
+        totalSpentLoading ||
+        monthlySpendingLoading;
 
     return (
-        <div>
+        <div className="container mx-auto py-6 space-y-6">
             {isLoading ? (
                 <div className="w-full py-12 flex justify-center">
                     <BarLoader width={"100%"} color="#0a2d63" />
@@ -125,13 +132,55 @@ const DashboardPage = () => {
                         {/* left column */}
                         <div className="lg:col-span-2 space-y-6">
                             {/* Expense Summary */}
+                            <ExpenseSummary
+                                monthlySpending={monthlySpending}
+                                totalSpent={totalSpent}
+                            />
+
                         </div>
 
                         {/* right column */}
                         <div className="space-y-6">
                             {/* Balance Details */}
+                            <Card>
+                                <CardHeader className="pb-3 flex items-center justify-between">
+                                    <CardTitle>Balance Details</CardTitle>
+                                    <Button variant="link" asChild className="p-0">
+                                        <Link href="/contacts" className="flex items-center">
+                                            View all
+                                            <ChevronRight className="ml-1 h-4 w-4" />
+                                        </Link>
+                                    </Button>
+                                </CardHeader>
+                                <CardContent>
+                                    <BalanceSummary balances={balances}/>
+                                </CardContent>
+                            </Card>
+
 
                             {/* Groups */}
+                            <Card>
+                                <CardHeader className="pb-3 flex items-center justify-between">
+                                    <CardTitle>Your Groups</CardTitle>
+                                    <Button variant="link" asChild className="p-0">
+                                        <Link href="/contacts" className="flex items-center">
+                                            View all
+                                            <ChevronRight className="ml-1 h-4 w-4" />
+                                        </Link>
+                                    </Button>
+                                </CardHeader>
+                                <CardContent>
+                                    <GroupList groups={groups}/>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button variant="outline" asChild className="w-full">
+                                        <Link href="/contacts?createGroup=true">
+                                        <Users className="mr-2 h-4 w-4"/>
+                                        Create new group
+                                        </Link>
+                                    </Button>
+                                </CardFooter>
+                            </Card>
                         </div>
                     </div>
 
