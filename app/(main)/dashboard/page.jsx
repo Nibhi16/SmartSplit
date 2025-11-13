@@ -40,8 +40,8 @@ const DashboardPage = () => {
   return (
     <div className="container mx-auto py-8 space-y-8 animate-fadeIn">
       {isLoading ? (
-        <div className="w-full py-20 flex justify-center">
-          <BarLoader width={"50%"} color="#2563eb" />
+        <div className="fixed top-[64px] left-0 w-full flex justify-center z-50">
+          <BarLoader width={"60%"} color="#2563eb" />
         </div>
       ) : (
         <>
@@ -91,8 +91,8 @@ const DashboardPage = () => {
                   {balances?.totalBalance > 0
                     ? "You are owed money"
                     : balances?.totalBalance < 0
-                    ? "You owe money"
-                    : "All settled up!"}
+                      ? "You owe money"
+                      : "All settled up!"}
                 </p>
               </CardContent>
             </Card>

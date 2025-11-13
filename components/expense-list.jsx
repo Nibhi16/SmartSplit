@@ -81,7 +81,7 @@ const ExpenseList = ({
 
         return (
           <Card
-            key={expense._id}
+            key={expense._id || expense.id || Math.random()}
             className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-blue-100/60 rounded-xl"
           >
             <CardContent className="py-5">

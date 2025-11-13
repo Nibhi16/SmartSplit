@@ -45,7 +45,7 @@ const PersonPage = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-12 flex flex-col items-center">
+      <div className="fixed top-[64px] left-0 w-full flex justify-center z-50">
         <BarLoader width={"60%"} color="#2563eb" />
         <p className="text-muted-foreground mt-4 animate-pulse">
           Loading your data...
