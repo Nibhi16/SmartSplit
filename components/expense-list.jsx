@@ -150,25 +150,25 @@ const ExpenseList = ({
               {/* SPLITS SECTION */}
               {expense.splits && expense.splits.length > 0 && (
                 <div className="mt-4 text-sm flex gap-2 flex-wrap">
-                  {expense.splits.map((split, idx) => {
+                  {expense.splits.map((split) => {
                     const splitUser = getUserDetails(split.userId, expense);
                     const isCurrentUser = split.userId === currentUser?._id;
 
                     return (
                       <Badge
-                        key={idx}
+                        key={`${expense._id}-${split.userId}`}   // ← FIXED KEY
                         variant={split.paid ? "outline" : "secondary"}
-                        className={`flex items-center gap-2 ${
-                          split.paid
+                        className={`flex items-center gap-2 ${split.paid
                             ? "border-green-300 text-green-700 bg-green-50"
                             : "border-gray-300 text-gray-700 bg-gray-50"
-                        }`}
+                          }`}
                       >
                         <Avatar className="h-4 w-4">
                           <AvatarFallback className="text-xs">
                             {splitUser.name?.charAt(0) || "?"}
                           </AvatarFallback>
                         </Avatar>
+
                         <span>
                           {isCurrentUser ? "You" : splitUser.name}: $
                           {Number(split.amount).toFixed(2)}
@@ -176,6 +176,7 @@ const ExpenseList = ({
                       </Badge>
                     );
                   })}
+
                 </div>
               )}
             </CardContent>
