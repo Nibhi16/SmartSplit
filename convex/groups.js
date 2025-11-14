@@ -104,6 +104,28 @@ export const getGroupExpenses = query({
             ledger[s.paidByUserId][s.receivedByUserId] -= s.amount;
         }
 
+        ids.forEach(a => {
+            ids.forEach(b => {
+                if (a >= b) return;
+
+                const diff = ledger[a][b] - ledger[b][a];
+                if (diff > 0) {
+                    // User A owes User B (net)
+                    ledger[a][b] = diff;
+                    ledger[b][a] = 0;
+                } else if (diff < 0) {
+                    // User B owes User A (net)
+                    ledger[b][a] = -diff;
+                    ledger[a][b] = 0;
+                } else {
+                    // They're even
+                    ledger[a][b] = 0;
+                    ledger[b][a] = 0;
+                }
+
+            })
+        })
+
         // Format Response Data
 
         // Create a comprehensive balance object for each member

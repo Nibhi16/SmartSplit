@@ -22,6 +22,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ExpenseList from "@/components/expense-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SettlementsList from "@/components/settlements-list";
+import GroupBalances from "@/components/group-balances";
+import GroupMembers from "@/components/group-members";
 
 const GroupPage = () => {
     const params = useParams();
@@ -81,7 +83,7 @@ const GroupPage = () => {
                             <div className="flex -space-x-3 mb-2">
                                 {members.slice(0, 5).map((member) => (
                                     <Avatar
-                                        key={member._id}
+                                        key={member.id}
                                         className="h-8 w-8 border-2 border-white hover:scale-105 transition-transform"
                                         title={member.name}
                                     >
@@ -144,7 +146,7 @@ const GroupPage = () => {
                             <CardTitle className="text-xl">Group Balances</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p>Group Balances</p>
+                            <GroupBalances balances={balances}/>
                         </CardContent>
                     </Card>
                 </div>
@@ -155,7 +157,7 @@ const GroupPage = () => {
                             <CardTitle className="text-xl">Members</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p>Mmebers</p>
+                            <GroupMembers members={members}/>
                         </CardContent>
                     </Card>
                 </div>
