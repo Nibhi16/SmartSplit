@@ -25,7 +25,7 @@ const GroupMembers = ({ members }) => {
 
                 return (
                     <div
-                        key={member._id}
+                        key={member.id}
                         className="
                             flex items-center justify-between p-4
                             rounded-xl
