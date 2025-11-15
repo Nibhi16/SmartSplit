@@ -1,7 +1,7 @@
 import { query } from "./_generated/server";
 
 export const getUsersWithOutstandingDebts = query({
-    handler: async () => {
+    handler: async (ctx) => {
         const users = await ctx.db.query("users").collect();
         const result = [];
 
