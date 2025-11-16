@@ -67,9 +67,9 @@ async function createGroups(ctx, users) {
   const now = Date.now();
 
   // Using the users from your database
-  const user1 = users[0]; 
-  const user2 = users[1]; 
-  const user3 = users[2]; 
+  const user1 = users[0];
+  const user2 = users[1];
+  const user3 = users[2];
 
   const groupDatas = [
     {
@@ -121,9 +121,11 @@ async function createGroups(ctx, users) {
 // Helper to create one-on-one expenses
 async function createOneOnOneExpenses(ctx, users) {
   const now = Date.now();
-  const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
-  const twoWeeksAgo = now - 14 * 24 * 60 * 60 * 1000;
-  const oneMonthAgo = now - 30 * 24 * 60 * 60 * 1000;
+  // Replace relative dates with fixed November 2025 dates
+  const oneWeekAgo = new Date("2025-11-08T08:24:59Z").getTime();
+  const twoWeeksAgo = new Date("2025-11-01T08:24:59Z").getTime();
+  const oneMonthAgo = new Date("2025-11-01T08:24:59Z").getTime(); // or adjust as needed
+
 
   // Using the users from your database
   const user1 = users[0];
@@ -147,7 +149,7 @@ async function createOneOnOneExpenses(ctx, users) {
     {
       description: "Cab ride to airport",
       amount: 450.0,
-      category: "transportation", 
+      category: "transportation",
       date: oneWeekAgo,
       paidByUserId: user2._id,
       splitType: "equal",
