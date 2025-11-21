@@ -14,8 +14,8 @@ export default function NewExpensePage() {
     <div className="container mx-auto py-10 max-w-4xl">
 
       {/* --- Header Section (Gradient, Clean, Like GroupPage) --- */}
-      <div className="mb-10 bg-gradient-to-r from-blue-600/90 to-purple-700/90 
-                      p-8 rounded-3xl shadow-xl text-white hover:shadow-2xl 
+      <div className="mb-10 bg-gradient-to-r from-primary/90 to-purple-600/90 
+                      p-8 rounded-3xl shadow-xl text-primary-foreground hover:shadow-2xl 
                       transition-all duration-300">
 
         <div className="flex items-center justify-between flex-wrap gap-4">
@@ -33,7 +33,7 @@ export default function NewExpensePage() {
           {/* Right Actions */}
           <Button
             variant="secondary"
-            className="bg-white text-blue-700 hover:bg-blue-100 shadow-sm"
+            className="bg-background/20 backdrop-blur-sm text-primary-foreground hover:bg-background/30 border border-background/30 shadow-sm"
             onClick={() => router.back()}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -43,9 +43,9 @@ export default function NewExpensePage() {
       </div>
 
       {/* --- Expense Form --- */}
-      <Card className="shadow-lg border border-blue-100">
+      <Card className="shadow-lg border border-border/50">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-blue-700">
+          <CardTitle className="text-lg font-semibold text-foreground">
             Choose Expense Type
           </CardTitle>
         </CardHeader>
@@ -53,22 +53,21 @@ export default function NewExpensePage() {
         <CardContent>
           <Tabs defaultValue="individual" className="w-full">
 
-            <TabsList className="grid grid-cols-2 w-full bg-blue-50 
-                                border border-blue-200 rounded-lg">
+            <TabsList className="grid grid-cols-2 w-full bg-muted/80 dark:bg-muted/60 backdrop-blur-sm border border-border/60 dark:border-border/40 rounded-xl shadow-sm">
               <TabsTrigger
                 value="individual"
-                className="data-[state=active]:bg-blue-600 
-                           data-[state=active]:text-white rounded-md 
-                           transition"
+                className="data-[state=active]:bg-primary 
+                           data-[state=active]:text-primary-foreground rounded-lg 
+                           transition-all duration-200"
               >
                 Individual Expense
               </TabsTrigger>
 
               <TabsTrigger
                 value="group"
-                className="data-[state=active]:bg-purple-600 
-                           data-[state=active]:text-white rounded-md 
-                           transition"
+                className="data-[state=active]:bg-primary 
+                           data-[state=active]:text-primary-foreground rounded-lg 
+                           transition-all duration-200"
               >
                 Group Expense
               </TabsTrigger>

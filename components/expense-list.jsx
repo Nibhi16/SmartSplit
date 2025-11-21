@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { motion } from "framer-motion";
 
 const ExpenseList = ({
   expenses,
@@ -72,7 +73,7 @@ const ExpenseList = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {expenses.map((expense) => {
+      {expenses.map((expense, index) => {
         const payer = getUserDetails(expense.paidByUserId);
         const isCurrentUserPayer = expense.paidByUserId === currentUser?._id;
         const category = getCategoryById(expense.category);
@@ -80,24 +81,28 @@ const ExpenseList = ({
         const showDeleteOption = canDeleteExpense(expense);
 
         return (
-          <Card
+          <motion.div
             key={expense._id || expense.id || Math.random()}
-            className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-blue-100/60 rounded-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+            whileHover={{ y: -4 }}
           >
+            <Card className="border-border/50 hover:border-primary/30 transition-all duration-300">
             <CardContent className="py-5">
               <div className="flex items-center justify-between">
                 {/* LEFT SIDE: Icon + Details */}
                 <div className="flex items-center gap-4">
-                  <div className="bg-gradient-to-tr from-blue-500/20 to-purple-500/20 p-3 rounded-full">
-                    <CategoryIcon className="h-5 w-5 text-blue-700" />
+                  <div className="bg-gradient-to-tr from-primary/20 to-purple-500/20 p-3 rounded-full shadow-sm">
+                    <CategoryIcon className="h-5 w-5 text-primary" />
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-800 text-lg">
+                    <h3 className="font-semibold text-foreground text-lg">
                       {expense.description}
                     </h3>
 
-                    <div className="flex items-center text-sm text-gray-500 gap-2">
+                    <div className="flex items-center text-sm text-muted-foreground gap-2">
                       <span>{format(new Date(expense.date), "MMM d, yyyy")}</span>
                       {showOtherPerson && (
                         <>
@@ -114,20 +119,20 @@ const ExpenseList = ({
                 {/* RIGHT SIDE: Amount + Delete */}
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <div className="font-bold text-blue-900 text-lg">
-                      ${expense.amount.toFixed(2)}
+                    <div className="font-bold text-primary text-lg">
+                      ₹{expense.amount.toFixed(2)}
                     </div>
 
                     {isGroupExpense ? (
-                      <Badge variant="outline" className="mt-1 text-blue-800 border-blue-300">
+                      <Badge variant="outline" className="mt-1 text-primary border-primary/30">
                         Group expense
                       </Badge>
                     ) : (
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {isCurrentUserPayer ? (
-                          <span className="text-green-700">You paid</span>
+                          <span className="text-green-500">You paid</span>
                         ) : (
-                          <span className="text-rose-500">{payer.name} paid</span>
+                          <span className="text-destructive">{payer.name} paid</span>
                         )}
                       </div>
                     )}
@@ -137,7 +142,7 @@ const ExpenseList = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 rounded-full text-rose-500 hover:text-rose-700 hover:bg-rose-100 transition"
+                      className="h-8 w-8 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
                       onClick={() => handleDeleteExpense(expense)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -170,7 +175,7 @@ const ExpenseList = ({
                         </Avatar>
 
                         <span>
-                          {isCurrentUser ? "You" : splitUser.name}: $
+                          {isCurrentUser ? "You" : splitUser.name}: ₹
                           {Number(split.amount).toFixed(2)}
                         </span>
                       </Badge>
@@ -181,6 +186,7 @@ const ExpenseList = ({
               )}
             </CardContent>
           </Card>
+          </motion.div>
         );
       })}
     </div>

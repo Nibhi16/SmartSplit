@@ -32,6 +32,7 @@ import React, { useState } from "react";
 import { BarLoader } from "react-spinners";
 import ExpenseList from "@/components/expense-list";
 import SettlementsList from "@/components/settlements-list";
+import { motion } from "framer-motion";
 
 const PersonPage = () => {
   const params = useParams();
@@ -60,9 +61,19 @@ const PersonPage = () => {
   const balance = data?.balance || 0;
 
   return (
-    <div className="container mx-auto py-8 max-w-5xl">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="container mx-auto px-4 py-8 pt-24 max-w-5xl"
+    >
       {/* Header */}
-      <div className="mb-8 bg-gradient-to-r from-blue-600/90 to-purple-700/90 rounded-2xl p-6 shadow-lg text-white">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="mb-8 bg-gradient-to-r from-primary/90 to-purple-600/90 rounded-2xl p-6 shadow-2xl text-primary-foreground"
+      >
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Button
@@ -108,10 +119,15 @@ const PersonPage = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Balance Card */}
-      <Card className="mb-8 border-2 border-blue-100 shadow-md hover:shadow-lg transition-all duration-300">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
+      <Card className="mb-8 border-2 border-primary/20 shadow-xl hover:shadow-2xl transition-all duration-300">
         <CardHeader className="pb-2 flex items-center gap-2">
           <Wallet className="text-blue-700" />
           <CardTitle className="text-xl font-semibold text-blue-900">
@@ -142,29 +158,35 @@ const PersonPage = () => {
                   : "text-gray-600"
               }`}
             >
-              ${Math.abs(balance).toFixed(2)}
+              ₹{Math.abs(balance).toFixed(2)}
             </div>
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Tabs Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
       <Tabs
         defaultValue="expenses"
         value={activeTab}
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <TabsList className="grid w-full grid-cols-2 bg-blue-50 border border-blue-200 rounded-lg">
+        <TabsList className="grid w-full grid-cols-2 bg-muted/80 dark:bg-muted/60 backdrop-blur-sm border border-border/60 dark:border-border/40 rounded-xl shadow-sm">
           <TabsTrigger
             value="expenses"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-md transition"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all duration-200"
           >
             Expenses ({expenses.length})
           </TabsTrigger>
           <TabsTrigger
             value="settlements"
-            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white rounded-md transition"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg transition-all duration-200"
           >
             Settlements ({settlements.length})
           </TabsTrigger>
@@ -186,7 +208,8 @@ const PersonPage = () => {
           />
         </TabsContent>
       </Tabs>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

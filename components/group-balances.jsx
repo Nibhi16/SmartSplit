@@ -4,6 +4,7 @@ import { useConvexQuery } from '@/hooks/use-convex-query';
 import { ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { motion } from 'framer-motion';
 
 const GroupBalances = ({ balances }) => {
     const { data: currentUser } = useConvexQuery(api.users.getCurrentUser);
@@ -44,29 +45,35 @@ const GroupBalances = ({ balances }) => {
     return (
         <div className="space-y-5">
 
-            <div className="
-                text-center pb-4 border-b
-                bg-gradient-to-r from-white/10 via-white/5 to-white/10
-                dark:from-white/5 dark:via-white/10 dark:to-white/5
-                p-4 rounded-xl backdrop-blur-md shadow-sm
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="
+                text-center pb-4 border-b border-border/50
+                bg-card/50 backdrop-blur-xl
+                p-4 rounded-xl shadow-lg
             ">
                 <p className="text-sm text-muted-foreground mb-1">Your balance</p>
 
-                <p
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
                     className={`
                         text-3xl font-extrabold tracking-wide 
-                        ${me.totalBalance > 0 ? "text-blue-700" : ""}
-                        ${me.totalBalance < 0 ? "text-rose-500" : ""}
+                        ${me.totalBalance > 0 ? "text-primary" : ""}
+                        ${me.totalBalance < 0 ? "text-destructive" : ""}
                     `}
                 >
                     {me.totalBalance > 0
-                        ? `+$${me.totalBalance.toFixed(2)}`
+                        ? `+₹${me.totalBalance.toFixed(2)}`
                         : me.totalBalance < 0
-                            ? `-$${Math.abs(me.totalBalance).toFixed(2)}`
+                            ? `-₹${Math.abs(me.totalBalance).toFixed(2)}`
                             : "₹0.00"
                     }
-                </p>
-            </div>
+                </motion.p>
+            </motion.div>
 
             {isAllSettledUp ? (
                 <div className="
@@ -88,16 +95,19 @@ const GroupBalances = ({ balances }) => {
                             </h3>
 
                             <div className="space-y-3">
-                                {owedByMembers.map((member) => (
-                                    <div
+                                {owedByMembers.map((member, index) => (
+                                    <motion.div
                                         key={member.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                                        whileHover={{ scale: 1.02, x: 4 }}
                                         className="
                                             flex items-center justify-between 
                                             p-3 rounded-xl 
-                                            bg-white/20 dark:bg-white/10
-                                            backdrop-blur-md
-                                            border border-white/30 dark:border-white/10
-                                            hover:shadow-md hover:scale-[1.015]
+                                            bg-card/50 backdrop-blur-sm
+                                            border border-border/50
+                                            hover:border-primary/30 hover:shadow-lg
                                             transition-all duration-300
                                         "
                                     >
@@ -111,10 +121,10 @@ const GroupBalances = ({ balances }) => {
                                             <span className="text-sm font-medium">{member.name}</span>
                                         </div>
 
-                                        <span className="text-blue-700 font-semibold tracking-wide">
-                                            ${member.amount.toFixed(2)}
+                                        <span className="text-primary font-semibold tracking-wide">
+                                            ₹{member.amount.toFixed(2)}
                                         </span>
-                                    </div>
+                                    </motion.div>
                                 ))}
                             </div>
                         </div>
@@ -128,16 +138,19 @@ const GroupBalances = ({ balances }) => {
                             </h3>
 
                             <div className="space-y-3">
-                                {owingToMembers.map((member) => (
-                                    <div
+                                {owingToMembers.map((member, index) => (
+                                    <motion.div
                                         key={member.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                                        whileHover={{ scale: 1.02, x: 4 }}
                                         className="
                                             flex items-center justify-between 
                                             p-3 rounded-xl 
-                                            bg-white/20 dark:bg-white/10
-                                            backdrop-blur-md
-                                            border border-white/30 dark:border-white/10
-                                            hover:shadow-md hover:scale-[1.015]
+                                            bg-card/50 backdrop-blur-sm
+                                            border border-border/50
+                                            hover:border-destructive/30 hover:shadow-lg
                                             transition-all duration-300
                                         "
                                     >
@@ -151,10 +164,10 @@ const GroupBalances = ({ balances }) => {
                                             <span className="text-sm font-medium">{member.name}</span>
                                         </div>
 
-                                        <span className="text-red-500 font-semibold tracking-wide">
-                                            ${member.amount.toFixed(2)}
+                                        <span className="text-destructive font-semibold tracking-wide">
+                                            ₹{member.amount.toFixed(2)}
                                         </span>
-                                    </div>
+                                    </motion.div>
                                 ))}
                             </div>
                         </div>

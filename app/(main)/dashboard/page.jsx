@@ -17,6 +17,29 @@ import {
 import ExpenseSummary from "./components/expense-summary";
 import BalanceSummary from "./components/balance-summary";
 import GroupList from "./components/group-list";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
 
 const DashboardPage = () => {
   const { data: balances, isLoading: balancesLoading } = useConvexQuery(
@@ -38,115 +61,152 @@ const DashboardPage = () => {
     monthlySpendingLoading;
 
   return (
-    <div className="container mx-auto py-8 space-y-8 animate-fadeIn">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="container mx-auto px-4 py-8 pt-24 space-y-8 max-w-7xl"
+    >
       {isLoading ? (
         <div className="fixed top-[64px] left-0 right-0 z-50">
-          <BarLoader width={"100%"} color="#0a2d63" />
+          <BarLoader width={"100%"} color="hsl(var(--primary))" />
         </div>
       ) : (
-        <>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
           {/* HEADER */}
-          <div className="flex items-center justify-between">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          >
             <div>
-              <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-primary via-purple-500 to-indigo-500 bg-clip-text text-transparent">
                 Dashboard
               </h1>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Track your balances, groups, and expenses all in one place 💡
               </p>
             </div>
 
-            <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-all shadow-md">
+            <Button
+              asChild
+              className="bg-gradient-to-r from-primary to-purple-600 text-primary-foreground hover:shadow-xl transition-all duration-200 shadow-lg"
+            >
               <Link href="/expenses/new">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Expense
               </Link>
             </Button>
-          </div>
+          </motion.div>
 
           {/* BALANCE CARDS */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
             {/* Total Balance */}
-            <Card className="hover:shadow-xl transition-all duration-300 rounded-2xl border border-blue-100 bg-gradient-to-b from-white to-blue-50/30 backdrop-blur-sm">
-              <CardHeader className="pb-1">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Balance
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-extrabold">
-                  {balances?.totalBalance > 0 ? (
-                    <span className="text-blue-700">
-                      +${balances.totalBalance.toFixed(2)}
-                    </span>
-                  ) : balances?.totalBalance < 0 ? (
-                    <span className="text-rose-500">
-                      -${Math.abs(balances.totalBalance).toFixed(2)}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">₹0.00</span>
-                  )}
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {balances?.totalBalance > 0
-                    ? "You are owed money"
-                    : balances?.totalBalance < 0
-                      ? "You owe money"
-                      : "All settled up!"}
-                </p>
-              </CardContent>
-            </Card>
+            <motion.div
+              whileHover={{ scale: 1.02, y: -4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="border-primary/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-xl">
+                <CardHeader className="pb-1">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Balance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-extrabold">
+                    {balances?.totalBalance > 0 ? (
+                      <span className="text-primary">
+                        +₹{balances.totalBalance.toFixed(2)}
+                      </span>
+                    ) : balances?.totalBalance < 0 ? (
+                      <span className="text-destructive">
+                        -₹{Math.abs(balances.totalBalance).toFixed(2)}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">₹0.00</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {balances?.totalBalance > 0
+                      ? "You are owed money"
+                      : balances?.totalBalance < 0
+                        ? "You owe money"
+                        : "All settled up!"}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* You are owed */}
-            <Card className="hover:shadow-xl transition-all duration-300 rounded-2xl border border-green-100 bg-gradient-to-b from-white to-green-50/30">
-              <CardHeader className="pb-1">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  You are owed
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-extrabold text-green-700">
-                  ${balances?.youAreOwed.toFixed(2)}
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  From {balances?.oweDetails?.youAreOwedBy?.length || 0} people
-                </p>
-              </CardContent>
-            </Card>
+            <motion.div
+              whileHover={{ scale: 1.02, y: -4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="border-green-500/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-xl">
+                <CardHeader className="pb-1">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    You are owed
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-extrabold text-green-500">
+                    ₹{balances?.youAreOwed.toFixed(2)}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    From {balances?.oweDetails?.youAreOwedBy?.length || 0} people
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* You owe */}
-            <Card className="hover:shadow-xl transition-all duration-300 rounded-2xl border border-rose-100 bg-gradient-to-b from-white to-rose-50/30">
-              <CardHeader className="pb-1">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  You owe
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {balances?.oweDetails?.youOwe?.length > 0 ? (
-                  <>
-                    <div className="text-3xl font-extrabold text-rose-500">
-                      ${balances?.youOwe.toFixed(2)}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      To {balances?.oweDetails?.youOwe?.length || 0} people
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-3xl font-extrabold text-gray-400">
-                      ₹0.00
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      You don’t owe anyone
-                    </p>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+            <motion.div
+              whileHover={{ scale: 1.02, y: -4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="border-destructive/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-xl">
+                <CardHeader className="pb-1">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    You owe
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {balances?.oweDetails?.youOwe?.length > 0 ? (
+                    <>
+                      <div className="text-3xl font-extrabold text-destructive">
+                        ₹{balances?.youOwe.toFixed(2)}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        To {balances?.oweDetails?.youOwe?.length || 0} people
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-3xl font-extrabold text-muted-foreground">
+                        ₹0.00
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        You don't owe anyone
+                      </p>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
 
           {/* MAIN GRID */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          >
             {/* LEFT COLUMN */}
             <div className="lg:col-span-2 space-y-6">
               <ExpenseSummary
@@ -158,15 +218,15 @@ const DashboardPage = () => {
             {/* RIGHT COLUMN */}
             <div className="space-y-6">
               {/* Balance Details */}
-              <Card className="rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300">
+              <Card className="border-border/50">
                 <CardHeader className="pb-3 flex items-center justify-between">
                   <CardTitle className="text-lg font-semibold">
                     Balance Details
                   </CardTitle>
-                  <Button variant="link" asChild className="text-blue-700 p-0">
-                    <Link href="/contacts" className="flex items-center">
+                  <Button variant="link" asChild className="text-primary p-0 hover:text-primary/80">
+                    <Link href="/contacts" className="flex items-center group">
                       View all
-                      <ChevronRight className="ml-1 h-4 w-4" />
+                      <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
                 </CardHeader>
@@ -176,15 +236,15 @@ const DashboardPage = () => {
               </Card>
 
               {/* Groups Section */}
-              <Card className="rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300">
+              <Card className="border-border/50">
                 <CardHeader className="pb-3 flex items-center justify-between">
                   <CardTitle className="text-lg font-semibold">
                     Your Groups
                   </CardTitle>
-                  <Button variant="link" asChild className="text-blue-700 p-0">
-                    <Link href="/contacts" className="flex items-center">
+                  <Button variant="link" asChild className="text-primary p-0 hover:text-primary/80">
+                    <Link href="/contacts" className="flex items-center group">
                       View all
-                      <ChevronRight className="ml-1 h-4 w-4" />
+                      <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
                 </CardHeader>
@@ -195,7 +255,7 @@ const DashboardPage = () => {
                   <Button
                     variant="outline"
                     asChild
-                    className="w-full border-blue-200 text-blue-700 hover:bg-blue-50"
+                    className="w-full border-primary/20 text-primary hover:bg-primary/10 hover:border-primary/40"
                   >
                     <Link href="/contacts?createGroup=true">
                       <Users className="mr-2 h-4 w-4" />
@@ -205,10 +265,10 @@ const DashboardPage = () => {
                 </CardFooter>
               </Card>
             </div>
-          </div>
-        </>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

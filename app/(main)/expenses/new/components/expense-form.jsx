@@ -25,6 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { getAllCategories } from "@/lib/expense-categories";
+import { motion } from "framer-motion";
 
 // Form schema validation
 const expenseSchema = z.object({
@@ -152,15 +153,25 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
   if (!currentUser) return null;
 
   return (
-  <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-
-    {/* --- Simple clean section --- */}
-    <div className="space-y-6 bg-white/70 backdrop-blur-md p-6 rounded-xl border border-gray-200 shadow-sm">
+    <motion.form
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-8"
+    >
+      {/* --- Simple clean section --- */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="space-y-6 bg-card/50 backdrop-blur-xl p-6 rounded-2xl border border-border/50 shadow-xl"
+      >
 
       {/* Description + Amount */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="text-gray-700 font-medium">Description</Label>
+          <Label className="text-foreground font-medium">Description</Label>
           <Input
             placeholder="Lunch, groceries, tickets..."
             {...register("description")}
@@ -172,15 +183,18 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-gray-700 font-medium">Amount</Label>
-          <Input
-            placeholder="0.00"
-            type="number"
-            step="0.01"
-            min="0.01"
-            {...register("amount")}
-            className="h-11"
-          />
+          <Label className="text-foreground font-medium">Amount</Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₹</span>
+            <Input
+              placeholder="0.00"
+              type="number"
+              step="0.01"
+              min="0.01"
+              {...register("amount")}
+              className="h-11 pl-8"
+            />
+          </div>
           {errors.amount && (
             <p className="text-xs text-red-500">{errors.amount.message}</p>
           )}
@@ -190,7 +204,7 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
       {/* Category + Date */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="text-gray-700 font-medium">Category</Label>
+          <Label className="text-foreground font-medium">Category</Label>
           <CategorySelector
             categories={categories}
             onChange={(id) => id && setValue("category", id)}
@@ -198,7 +212,7 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-gray-700 font-medium">Date</Label>
+          <Label className="text-foreground font-medium">Date</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -226,7 +240,7 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
       {/* Group / Participants */}
       {type === "group" && (
         <div className="space-y-1.5">
-          <Label className="text-gray-700 font-medium">Group</Label>
+          <Label className="text-foreground font-medium">Group</Label>
           <GroupSelector
             onChange={(group) => {
               if (!selectedGroup || selectedGroup.id !== group.id) {
@@ -244,7 +258,7 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
 
       {type === "individual" && (
         <div className="space-y-1.5">
-          <Label className="text-gray-700 font-medium">Participants</Label>
+          <Label className="text-foreground font-medium">Participants</Label>
           <ParticipantSelector
             participants={participants}
             onParticipantsChange={setParticipants}
@@ -254,10 +268,10 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
 
       {/* Who paid */}
       <div className="space-y-1.5">
-        <Label className="text-gray-700 font-medium">Paid By</Label>
+        <Label className="text-foreground font-medium">Paid By</Label>
         <select
           {...register("paidByUserId")}
-          className="w-full border rounded-md p-2 h-11"
+          className="w-full border border-border/50 rounded-xl p-2 h-11 bg-background/50 backdrop-blur-sm text-foreground focus:border-primary focus:ring-primary/20 focus:ring-2 transition-all duration-200"
         >
           <option value="">Select</option>
           {participants.map((p) => (
@@ -270,12 +284,12 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
 
       {/* Split Type */}
       <div className="space-y-2">
-        <Label className="text-gray-700 font-medium">Split Type</Label>
+        <Label className="text-foreground font-medium">Split Type</Label>
         <Tabs
           defaultValue="equal"
           onValueChange={(value) => setValue("splitType", value)}
         >
-          <TabsList className="grid grid-cols-3 w-full bg-gray-100 border rounded-lg">
+          <TabsList className="grid grid-cols-3 w-full bg-muted/80 dark:bg-muted/60 border border-border/60 dark:border-border/40 rounded-xl p-1">
             <TabsTrigger value="equal">Equal</TabsTrigger>
             <TabsTrigger value="percentage">Percentage</TabsTrigger>
             <TabsTrigger value="exact">Exact</TabsTrigger>
@@ -312,19 +326,24 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+      </motion.div>
 
-    {/* Submit */}
-    <div className="flex justify-end">
-      <Button
-        type="submit"
-        disabled={isSubmitting || participants.length <= 1}
-        className="px-6 py-3 font-semibold shadow-md"
+      {/* Submit */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="flex justify-end"
       >
-        {isSubmitting ? "Creating..." : "Create Expense"}
-      </Button>
-    </div>
-  </form>
-);
+        <Button
+          type="submit"
+          disabled={isSubmitting || participants.length <= 1}
+          className="px-6 py-3 font-semibold shadow-lg hover:shadow-xl"
+        >
+          {isSubmitting ? "Creating..." : "Create Expense"}
+        </Button>
+      </motion.div>
+    </motion.form>
+  );
 
 }

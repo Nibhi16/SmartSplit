@@ -52,7 +52,7 @@ const GroupList = ({ groups }) => {
                   balance > 0 ? "text-blue-800" : "text-rose-400"
                 }`}
               >
-                {balance > 0 ? "+" : "-"}${Math.abs(balance).toFixed(2)}
+                {balance > 0 ? "+" : "-"}₹{Math.abs(balance).toFixed(2)}
               </span>
             ) : (
               <span className="text-xs text-muted-foreground">Settled up</span>

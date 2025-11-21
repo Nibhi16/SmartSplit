@@ -38,7 +38,7 @@ const BalanceSummary = ({ balances }) => {
                   </div>
 
                   <span className="font-medium text-blue-800">
-                    ${item.amount.toFixed(2)}
+                    ₹{item.amount.toFixed(2)}
                   </span>
                 </div>
               </Link>
@@ -67,7 +67,7 @@ const BalanceSummary = ({ balances }) => {
                   </div>
 
                   <span className="font-medium text-blue-800">
-                    ${item.amount.toFixed(2)}
+                    ₹{item.amount.toFixed(2)}
                   </span>
                 </div>
               </Link>

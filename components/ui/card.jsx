@@ -1,5 +1,7 @@
-import * as React from "react"
+"use client";
 
+import * as React from "react"
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 function Card({
@@ -7,10 +9,14 @@ function Card({
   ...props
 }) {
   return (
-    <div
+    <motion.div
       data-slot="card"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ y: -2 }}
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        "bg-card/60 backdrop-blur-xl text-card-foreground flex flex-col gap-6 rounded-2xl border border-border/50 py-6 shadow-xl shadow-primary/5 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/20",
         className
       )}
       {...props} />
