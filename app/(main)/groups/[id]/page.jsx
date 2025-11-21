@@ -38,7 +38,7 @@ const GroupPage = () => {
         return (
             <div className="fixed top-[64px] left-0 right-0 w-full z-50">
                 <div className="w-full">
-                    <BarLoader width={"100vw"} color="#2563eb" />
+                    <BarLoader width={"100%"} color="#0a2d63" />
                 </div>
             </div>
         );
@@ -120,7 +120,7 @@ const GroupPage = () => {
                             variant="secondary"
                             className="bg-white/20 hover:bg-white/30 text-white border-white/30"
                         >
-                            <Link href={`/settlements/user/${params.id}`}>
+                            <Link href={`/settlements/group/${params.id}`}>
                                 <ArrowLeftRight className="mr-2 h-4 w-4" />
                                 Settle Up
                             </Link>

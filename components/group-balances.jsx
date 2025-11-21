@@ -63,7 +63,7 @@ const GroupBalances = ({ balances }) => {
                         ? `+$${me.totalBalance.toFixed(2)}`
                         : me.totalBalance < 0
                             ? `-$${Math.abs(me.totalBalance).toFixed(2)}`
-                            : "$0.00"
+                            : "₹0.00"
                     }
                 </p>
             </div>

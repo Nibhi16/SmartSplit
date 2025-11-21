@@ -119,7 +119,7 @@ const ExpenseList = ({
                     </div>
 
                     {isGroupExpense ? (
-                      <Badge variant="outline" className="mt-1 text-blue-600 border-blue-300">
+                      <Badge variant="outline" className="mt-1 text-blue-800 border-blue-300">
                         Group expense
                       </Badge>
                     ) : (

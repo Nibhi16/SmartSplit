@@ -46,7 +46,7 @@ const PersonPage = () => {
   if (isLoading) {
     return (
       <div className="fixed top-[64px] left-0 w-full flex justify-center z-50">
-        <BarLoader width={"60%"} color="#2563eb" />
+        <BarLoader width={"100%"} color="#0a2d63" />
         <p className="text-muted-foreground mt-4 animate-pulse">
           Loading your data...
         </p>

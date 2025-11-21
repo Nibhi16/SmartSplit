@@ -40,8 +40,8 @@ const DashboardPage = () => {
   return (
     <div className="container mx-auto py-8 space-y-8 animate-fadeIn">
       {isLoading ? (
-        <div className="fixed top-[64px] left-0 w-full flex justify-center z-50">
-          <BarLoader width={"60%"} color="#2563eb" />
+        <div className="fixed top-[64px] left-0 right-0 z-50">
+          <BarLoader width={"100%"} color="#0a2d63" />
         </div>
       ) : (
         <>
@@ -84,7 +84,7 @@ const DashboardPage = () => {
                       -${Math.abs(balances.totalBalance).toFixed(2)}
                     </span>
                   ) : (
-                    <span className="text-gray-400">$0.00</span>
+                    <span className="text-gray-400">₹0.00</span>
                   )}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
@@ -134,7 +134,7 @@ const DashboardPage = () => {
                 ) : (
                   <>
                     <div className="text-3xl font-extrabold text-gray-400">
-                      $0.00
+                      ₹0.00
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
                       You don’t owe anyone
