@@ -114,7 +114,7 @@ export default function Home() {
     </Badge>
     <h1 className="bg-gradient-to-r from-primary via-purple-500 to-indigo-500 bg-clip-text
     text-transparent text-3xl font-bold tracking-tight">
-         Because splitting bills shouldn't be complicated.
+         Because splitting bills shouldn&apos;t be complicated.
     </h1>
     <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
         Start managing expenses with friends in just a few easy steps.

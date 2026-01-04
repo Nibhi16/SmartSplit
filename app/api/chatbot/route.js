@@ -8,7 +8,9 @@ const createAIService = (apiKey) => {
 
   return async (message, context) => {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Use model name with -latest suffix (more reliable)
+    // Fallback to gemini-pro if this fails (error will be caught in try/catch)
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     // Build safe context (no sensitive financial data unless user explicitly asks)
     const safeContext = {
@@ -65,7 +67,7 @@ export async function POST(request) {
     const aiService = createAIService(apiKey);
 
     // Handle message (intent-based or AI)
-    const response = await handleChatMessage(message, context, aiService);
+    const response = await handleChatMessage(message, context || {}, aiService);
 
     return NextResponse.json({ response });
 
