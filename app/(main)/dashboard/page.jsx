@@ -17,6 +17,7 @@ import {
 import ExpenseSummary from "./components/expense-summary";
 import BalanceSummary from "./components/balance-summary";
 import GroupList from "./components/group-list";
+import InsightsSection from "./components/insights-section";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -213,6 +214,7 @@ const DashboardPage = () => {
                 monthlySpending={monthlySpending}
                 totalSpent={totalSpent}
               />
+              <InsightsSection />
             </div>
 
             {/* RIGHT COLUMN */}

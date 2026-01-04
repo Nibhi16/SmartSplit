@@ -5,16 +5,18 @@ import { Authenticated, Unauthenticated } from "convex/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { BarLoader } from "react-spinners";
 import { Button } from "./ui/button";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, MessageCircle } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { motion } from "framer-motion";
+import ChatbotDialog from "./chatbot/chatbot-dialog";
 
 const Header = () => {
   const { isLoading } = useStoreUser();
   const path = usePathname();
+  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   return (
     <motion.header
@@ -67,6 +69,15 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <Authenticated>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setChatbotOpen(true)}
+              className="hover:bg-primary/10 hover:text-primary transition-all duration-200"
+              title="AI Assistant"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </Button>
             <Link href="/dashboard">
               <Button
                 variant="outline"
@@ -84,6 +95,7 @@ const Header = () => {
               </Button>
             </Link>
             <UserButton />
+            <ChatbotDialog open={chatbotOpen} onOpenChange={setChatbotOpen} />
           </Authenticated>
           <Unauthenticated>
             <SignInButton>
