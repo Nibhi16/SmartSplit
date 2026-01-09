@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    turbo: {}
-  }
+  turbopack: {}
 };
 
 export default nextConfig;
