@@ -53,7 +53,7 @@ export function GroupSelector({ onChange }) {
           <SelectValue placeholder="Select a group" />
         </SelectTrigger>
         <SelectContent>
-          {data.groups.map((group) => (
+          {(data?.groups ?? []).map((group) => (
             <SelectItem key={group.id} value={group.id}>
               <div className="flex items-center gap-2">
                 <div className="bg-primary/10 p-1 rounded-full">

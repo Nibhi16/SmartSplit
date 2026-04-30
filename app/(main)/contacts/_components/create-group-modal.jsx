@@ -17,17 +17,9 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { UserPlus, X } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { UserPlus, X, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { UserInviteSelect } from "@/components/user-invite-select";
 
 const groupSchema = z.object({
   name: z.string().min(1, "Group name is required"),
@@ -36,22 +28,29 @@ const groupSchema = z.object({
 
 const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
   const [selectedMembers, setSelectedMembers] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [commandOpen, setCommandOpen] = useState(false);
+  const [selectedInvites, setSelectedInvites] = useState([]); // Track email invites
 
   const { data: currentUser } = useConvexQuery(api.users.getCurrentUser);
-  const { data: searchResults, isLoading: isSearching } = useConvexQuery(
-    api.users.searchUsers,
-    { query: searchQuery }
-  );
 
   const createGroup = useConvexMutation(api.contacts.createGroup);
+  const inviteUser = useConvexMutation(api.contacts.inviteUser);
 
   const addMember = (user) => {
-    if (!selectedMembers.some((m) => m.id === user.id)) {
-      setSelectedMembers([...selectedMembers, user]);
+    if (user.isInvited) {
+      // Handle invite
+      if (!selectedInvites.includes(user.email)) {
+        setSelectedInvites([...selectedInvites, user.email]);
+      }
+    } else {
+      // Handle existing user
+      if (!selectedMembers.some((m) => m.id === user.id)) {
+        setSelectedMembers([...selectedMembers, user]);
+      }
     }
-    setCommandOpen(false);
+  };
+
+  const removeInvite = (email) => {
+    setSelectedInvites(selectedInvites.filter((e) => e !== email));
   };
 
   const removeMember = (userId) => {
@@ -61,6 +60,7 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
   const handleClose = () => {
     reset();
     setSelectedMembers([]);
+    setSelectedInvites([]);
     onClose();
   };
 
@@ -79,15 +79,28 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
 
   const onSubmit = async (data) => {
     try {
-      const memberIds = selectedMembers.map((member) => member.id);
+      const memberIds = (selectedMembers ?? []).map((member) => member.id);
       const groupId = await createGroup.mutate({
         name: data.name,
         description: data.description,
         members: memberIds,
       });
 
+      // Send invites for emails that don't have users
+      for (const email of selectedInvites) {
+        try {
+          await inviteUser.mutate({ email, groupId });
+        } catch (error) {
+          console.error(`Failed to invite ${email}:`, error);
+          // Continue with other invites even if one fails
+        }
+      }
+
       console.log("Group created with ID:", groupId);
       toast.success("Group created successfully!");
+      if (selectedInvites.length > 0) {
+        toast.success(`Invited ${selectedInvites.length} user(s) via email`);
+      }
       handleClose();
       if (onSuccess) onSuccess(groupId);
     } catch (error) {
@@ -137,7 +150,7 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
                 </Badge>
               )}
 
-              {selectedMembers.map((member) => (
+              {(selectedMembers ?? []).map((member) => (
                 <Badge key={member.id} variant="secondary" className="px-3 py-1">
                   <Avatar className="h-5 w-5 mr-2">
                     <AvatarImage src={member.imageUrl} />
@@ -156,8 +169,31 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
                 </Badge>
               ))}
 
-              <Popover open={commandOpen} onOpenChange={setCommandOpen}>
-                <PopoverTrigger asChild>
+              {(selectedInvites ?? []).map((email) => (
+                <Badge key={email} variant="outline" className="px-3 py-1">
+                  <Mail className="h-4 w-4 mr-2" />
+                  <span>{email} (Invited)</span>
+                  <Button
+                    type="button"
+                    onClick={() => removeInvite(email)}
+                    className="ml-2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+
+              <UserInviteSelect
+                onSelect={(user) => {
+                  if (user.isInvited) {
+                    addInvite(user.email);
+                  } else {
+                    addMember(user);
+                  }
+                }}
+                excludeIds={[...(selectedMembers ?? []).map(m => m.id), currentUser?._id].filter(Boolean)}
+                groupId={null}
+                trigger={
                   <Button
                     type="button"
                     variant="outline"
@@ -167,63 +203,12 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
                     <UserPlus className="h-3.5 w-3.5" />
                     Add member
                   </Button>
-                </PopoverTrigger>
-
-                <PopoverContent className="p-0" align="start" side="bottom">
-                  <Command>
-                    <CommandInput
-                      placeholder="Search by name or email..."
-                      value={searchQuery}
-                      onValueChange={setSearchQuery}
-                    />
-                    <CommandList>
-                      <CommandEmpty>
-                        {searchQuery.length < 2 ? (
-                          <p className="py-3 px-4 text-sm text-center text-muted-foreground">
-                            Type at least 2 characters to search
-                          </p>
-                        ) : isSearching ? (
-                          <p className="py-3 px-4 text-sm text-center text-muted-foreground">
-                            Searching...
-                          </p>
-                        ) : (
-                          <p className="py-3 px-4 text-sm text-center text-muted-foreground">
-                            No users found
-                          </p>
-                        )}
-                      </CommandEmpty>
-
-                      <CommandGroup heading="Users">
-                        {searchResults?.map((user) => (
-                          <CommandItem
-                            key={user.id}
-                            value={user.name + user.email}
-                            onSelect={() => addMember(user)}
-                          >
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-6 w-6">
-                                <AvatarImage src={user.imageUrl} />
-                                <AvatarFallback>
-                                  {user.name?.charAt(0) || "?"}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex flex-col">
-                                <span className="text-sm">{user.name}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  {user.email}
-                                </span>
-                              </div>
-                            </div>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+                }
+                placeholder="Search by name or email..."
+              />
             </div>
 
-            {selectedMembers.length === 0 && (
+            {selectedMembers.length === 0 && selectedInvites.length === 0 && (
               <p className="text-sm text-amber-600">
                 Add at least one other person to the group
               </p>
@@ -236,7 +221,7 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || selectedMembers.length === 0}
+              disabled={isSubmitting || (selectedMembers.length === 0 && selectedInvites.length === 0)}
             >
               {isSubmitting ? "Creating..." : "Create Group"}
             </Button>

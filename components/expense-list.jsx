@@ -73,7 +73,7 @@ const ExpenseList = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {expenses.map((expense, index) => {
+      {(expenses ?? []).map((expense, index) => {
         const payer = getUserDetails(expense.paidByUserId);
         const isCurrentUserPayer = expense.paidByUserId === currentUser?._id;
         const category = getCategoryById(expense.category);
@@ -155,7 +155,7 @@ const ExpenseList = ({
               {/* SPLITS SECTION */}
               {expense.splits && expense.splits.length > 0 && (
                 <div className="mt-4 text-sm flex gap-2 flex-wrap">
-                  {expense.splits.map((split) => {
+                  {(expense?.splits ?? []).map((split) => {
                     const splitUser = getUserDetails(split.userId, expense);
                     const isCurrentUser = split.userId === currentUser?._id;
 

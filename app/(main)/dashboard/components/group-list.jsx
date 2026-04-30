@@ -17,7 +17,7 @@ const GroupList = ({ groups }) => {
 
   return (
   <div className="space-y-3">
-    {groups.map((group) => {
+    {(groups ?? []).map((group) => {
       const balance = group.balance || 0;
       const hasBalance = balance !== 0;
 

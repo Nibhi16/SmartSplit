@@ -100,8 +100,20 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
     try {
       const amount = parseFloat(data.amount);
 
+      // Check for pending invites (users with invite- prefix)
+      const pendingInvites = (participants ?? []).filter((p) => p.isInvited || p.id?.startsWith("invite-"));
+      if (pendingInvites.length > 0) {
+        toast.error(
+          `Cannot create expense with pending invites. Please wait for ${(pendingInvites ?? []).map(p => p.email).join(", ")} to sign up first.`
+        );
+        return;
+      }
+
+      // Filter out pending invites from splits
+      const validSplits = (splits ?? []).filter((split) => !split.userId?.startsWith("invite-"));
+      
       // Prepare splits in the format expected by the API
-      const formattedSplits = splits.map((split) => ({
+      const formattedSplits = (validSplits ?? []).map((split) => ({
         userId: split.userId,
         amount: split.amount,
         paid: split.userId === data.paidByUserId,
@@ -118,6 +130,12 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
         toast.error(
           `Split amounts don't add up to the total. Please adjust your splits.`
         );
+        return;
+      }
+
+      // Validate paidByUserId is not a pending invite
+      if (data.paidByUserId?.startsWith("invite-")) {
+        toast.error("Cannot select a pending invite as payer. Please select an existing user.");
         return;
       }
 
@@ -262,7 +280,13 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
           <ParticipantSelector
             participants={participants}
             onParticipantsChange={setParticipants}
+            groupId={null}
           />
+          {(participants ?? []).some((p) => p.isInvited) && (
+            <p className="text-xs text-amber-600">
+              Note: Pending invites cannot be used in expenses until they sign up.
+            </p>
+          )}
         </div>
       )}
 
@@ -274,12 +298,19 @@ export function ExpenseForm({ type = "individual", onSuccess }) {
           className="w-full border border-border/50 rounded-xl p-2 h-11 bg-background/50 backdrop-blur-sm text-foreground focus:border-primary focus:ring-primary/20 focus:ring-2 transition-all duration-200"
         >
           <option value="">Select</option>
-          {participants.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.id === currentUser._id ? "You" : p.name}
-            </option>
-          ))}
+          {(participants ?? [])
+            .filter((p) => !p.isInvited && !p.id?.startsWith("invite-"))
+            .map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.id === currentUser._id ? "You" : p.name}
+              </option>
+            ))}
         </select>
+        {(participants ?? []).some((p) => p.isInvited || p.id?.startsWith("invite-")) && (
+          <p className="text-xs text-amber-600">
+            Pending invites cannot be selected as payer. They will be added when they sign up.
+          </p>
+        )}
       </div>
 
       {/* Split Type */}

@@ -19,7 +19,7 @@ const GroupMembers = ({ members }) => {
 
     return (
         <div className="space-y-3">
-            {members.map((member) => {
+            {(members ?? []).map((member) => {
                 const isCurrentUser = member.id === currentUser?._id;
                 const isAdmin = member.role === "admin";
 

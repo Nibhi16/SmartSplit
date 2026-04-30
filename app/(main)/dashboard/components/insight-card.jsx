@@ -82,3 +82,4 @@ const InsightCard = ({ insight }) => {
 
 export default InsightCard;
 
+

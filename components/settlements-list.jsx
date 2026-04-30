@@ -41,7 +41,7 @@ const SettlementsList = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {settlements.map((settlement, index) => {
+      {(settlements ?? []).map((settlement, index) => {
         const payer = getUserDetails(settlement.paidByUserId);
         const receiver = getUserDetails(settlement.receivedByUserId);
         const isCurrentUserPayer = settlement.paidByUserId === currentUser?._id;

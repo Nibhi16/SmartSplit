@@ -16,12 +16,12 @@ const ChatContainer = ({ messages, onSend, isLoading, suggestions }) => {
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-4">
-          {messages.length === 0 && (
+          {(messages ?? []).length === 0 && (
             <div className="text-center py-8 text-muted-foreground text-sm">
               <p>Ask me about your expenses, balances, or spending patterns!</p>
             </div>
           )}
-          {messages.map((msg, index) => (
+          {(messages ?? []).map((msg, index) => (
             <ChatMessage key={index} message={msg.text} isUser={msg.isUser} />
           ))}
           {isLoading && (

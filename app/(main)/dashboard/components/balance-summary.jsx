@@ -7,8 +7,8 @@ const BalanceSummary = ({ balances }) => {
   if (!balances) return null;
 
   const { oweDetails } = balances;
-  const hasOwed = oweDetails.youAreOwedBy.length > 0;
-  const hasOwing = oweDetails.youOwe.length > 0;
+  const hasOwed = (oweDetails?.youAreOwedBy ?? []).length > 0;
+  const hasOwing = (oweDetails?.youOwe ?? []).length > 0;
 
   return (
     <div className="space-y-4">
@@ -26,7 +26,7 @@ const BalanceSummary = ({ balances }) => {
           </h3>
 
           <div className="space-y-3">
-            {oweDetails.youAreOwedBy.map((item) => (
+            {(oweDetails?.youAreOwedBy ?? []).map((item) => (
               <Link key={item.userId} href={`/person/${item.userId}`}>
                 <div className="flex items-center justify-between hover:bg-muted p-2 rounded-md transition-colors gap-2">
                   <div className="flex items-center gap-2">
@@ -55,7 +55,7 @@ const BalanceSummary = ({ balances }) => {
           </h3>
 
           <div className="space-y-3">
-            {oweDetails.youOwe.map((item) => (
+            {(oweDetails?.youOwe ?? []).map((item) => (
               <Link key={item.userId} href={`/person/${item.userId}`}>
                 <div className="flex items-center justify-between hover:bg-muted p-2 rounded-md transition-colors gap-2">
                   <div className="flex items-center gap-2">

@@ -251,7 +251,7 @@ export default function SettlementForm({ entityType, entityData, onSuccess }) {
 
   // Render form for group settlement
   if (entityType === "group") {
-    const groupMembers = entityData.balances;
+    const groupMembers = entityData?.balances ?? [];
 
     return (
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -259,7 +259,7 @@ export default function SettlementForm({ entityType, entityData, onSuccess }) {
         <div className="space-y-2">
           <Label>Who are you settling with?</Label>
           <div className="space-y-2">
-            {groupMembers.map((member) => {
+            {(groupMembers ?? []).map((member) => {
               const isSelected = selectedGroupMemberId === member.userId;
               const isOwing = member.netBalance < 0; // negative means they owe you
               const isOwed = member.netBalance > 0; // positive means you owe them

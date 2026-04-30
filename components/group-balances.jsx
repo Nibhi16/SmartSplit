@@ -27,13 +27,13 @@ const GroupBalances = ({ balances }) => {
         );
     }
 
-    const userMap = Object.fromEntries(balances.map((b) => [b.id, b]));
+    const userMap = Object.fromEntries((balances ?? []).map((b) => [b.id, b]));
 
-    const owedByMembers = me.owedBy
+    const owedByMembers = (me?.owedBy ?? [])
         .map(({ from, amount }) => ({ ...userMap[from], amount }))
         .sort((a, b) => b.amount - a.amount);
 
-    const owingToMembers = me.owes
+    const owingToMembers = (me?.owes ?? [])
         .map(({ to, amount }) => ({ ...userMap[to], amount }))
         .sort((a, b) => b.amount - a.amount);
 

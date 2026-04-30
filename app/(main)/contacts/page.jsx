@@ -63,7 +63,7 @@ const ContactsPage = () => {
                         </Card>
                     ) : (
                         <div className="flex flex-col gap-4">
-                            {users.map((user) => (
+                            {(users ?? []).map((user) => (
                                 <Link key={user.id} href={`/person/${user.id}`}>
                                     <Card className="hover:bg-muted/30 transition-colors cursor-pointer">
                                         <CardContent className="py-4">
@@ -102,7 +102,7 @@ const ContactsPage = () => {
                         </Card>
                     ) : (
                         <div className="flex flex-col gap-4">
-                            {groups.map((group) => (
+                            {(groups ?? []).map((group) => (
                                 <Link key={group.id} href={`/groups/${group.id}`}>
                                     <Card className="hover:bg-muted/30 transition-colors cursor-pointer">
                                         <CardContent className="py-4">

@@ -11,6 +11,7 @@ import {
     ArrowLeftRight,
     PlusCircle,
     Users,
+    UserPlus,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -25,11 +26,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SettlementsList from "@/components/settlements-list";
 import GroupBalances from "@/components/group-balances";
 import GroupMembers from "@/components/group-members";
+import AddMemberModal from "@/app/(main)/contacts/_components/add-member-modal";
 
 const GroupPage = () => {
     const params = useParams();
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("expenses");
+    const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
 
     const { data, isLoading } = useConvexQuery(api.groups.getGroupExpenses, {
         groupId: params.id,
@@ -92,7 +95,7 @@ const GroupPage = () => {
                         <div>
                             {/* Member Avatars Row */}
                             <div className="flex -space-x-3 mb-2">
-                                {members.slice(0, 5).map((member) => (
+                                {(members ?? []).slice(0, 5).map((member) => (
                                     <Avatar
                                         key={member.id}
                                         className="h-8 w-8 border-2 border-white hover:scale-105 transition-transform"
@@ -170,7 +173,17 @@ const GroupPage = () => {
                 <div>
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-xl">Members</CardTitle>
+                            <div className="flex items-center justify-between">
+                                <CardTitle className="text-xl">Members</CardTitle>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setIsAddMemberOpen(true)}
+                                >
+                                    <UserPlus className="h-4 w-4 mr-2" />
+                                    Add
+                                </Button>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <GroupMembers members={members}/>
@@ -223,6 +236,14 @@ const GroupPage = () => {
             </Tabs>
             </motion.div>
 
+            <AddMemberModal
+                isOpen={isAddMemberOpen}
+                onClose={() => setIsAddMemberOpen(false)}
+                groupId={params.id}
+                onSuccess={() => {
+                    // Refresh will happen automatically via Convex reactivity
+                }}
+            />
         </motion.div>
     );
 };

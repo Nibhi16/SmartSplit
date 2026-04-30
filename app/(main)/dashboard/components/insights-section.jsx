@@ -64,7 +64,7 @@ const InsightsSection = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {insights.map((insight, index) => (
+          {(insights ?? []).map((insight, index) => (
             <motion.div
               key={insight.id}
               initial={{ opacity: 0, y: 20 }}
@@ -81,4 +81,5 @@ const InsightsSection = () => {
 };
 
 export default InsightsSection;
+
 

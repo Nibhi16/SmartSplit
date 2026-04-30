@@ -29,7 +29,7 @@ export function SplitSelector({
     if (type === "equal") {
       // Equal splits
       const shareAmount = amount / participants.length;
-      newSplits = participants.map((participant) => ({
+      newSplits = (participants ?? []).map((participant) => ({
         userId: participant.id,
         name: participant.name,
         email: participant.email,
@@ -41,7 +41,7 @@ export function SplitSelector({
     } else if (type === "percentage") {
       // Initialize percentage splits evenly
       const evenPercentage = 100 / participants.length;
-      newSplits = participants.map((participant) => ({
+      newSplits = (participants ?? []).map((participant) => ({
         userId: participant.id,
         name: participant.name,
         email: participant.email,
@@ -53,7 +53,7 @@ export function SplitSelector({
     } else if (type === "exact") {
       // Initialize exact splits evenly
       const evenAmount = amount / participants.length;
-      newSplits = participants.map((participant) => ({
+      newSplits = (participants ?? []).map((participant) => ({
         userId: participant.id,
         name: participant.name,
         email: participant.email,
@@ -88,7 +88,7 @@ export function SplitSelector({
   // Update the percentage splits - no automatic adjustment of other values
   const updatePercentageSplit = (userId, newPercentage) => {
     // Update just this user's percentage and recalculate amount
-    const updatedSplits = splits.map((split) => {
+    const updatedSplits = (splits ?? []).map((split) => {
       if (split.userId === userId) {
         return {
           ...split,
@@ -125,7 +125,7 @@ export function SplitSelector({
     const parsedAmount = parseFloat(newAmount) || 0;
 
     // Update just this user's amount and recalculate percentage
-    const updatedSplits = splits.map((split) => {
+    const updatedSplits = (splits ?? []).map((split) => {
       if (split.userId === userId) {
         return {
           ...split,
@@ -163,7 +163,7 @@ export function SplitSelector({
 
   return (
     <div className="space-y-4 mt-4">
-      {splits.map((split) => (
+      {(splits ?? []).map((split) => (
         <div
           key={split.userId}
           className="flex items-center justify-between gap-4"

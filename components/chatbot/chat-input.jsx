@@ -31,9 +31,9 @@ const ChatInput = ({ onSend, isLoading, suggestions = [] }) => {
 
   return (
     <div className="border-t border-border/50 p-4 space-y-3">
-      {suggestions.length > 0 && (
+      {(suggestions ?? []).length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {suggestions.map((suggestion, index) => (
+          {(suggestions ?? []).map((suggestion, index) => (
             <button
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
@@ -67,4 +67,5 @@ const ChatInput = ({ onSend, isLoading, suggestions = [] }) => {
 };
 
 export default ChatInput;
+
 
