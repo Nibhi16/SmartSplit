@@ -29,6 +29,7 @@ import GroupMembers from "@/components/group-members";
 import AddMemberModal from "@/app/(main)/contacts/_components/add-member-modal";
 
 const GroupPage = () => {
+    const MAX_MEMBER_AVATARS = 5;
     const params = useParams();
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("expenses");
@@ -95,7 +96,7 @@ const GroupPage = () => {
                         <div>
                             {/* Member Avatars Row */}
                             <div className="flex -space-x-3 mb-2">
-                                {(members ?? []).slice(0, 5).map((member) => (
+                                {(members ?? []).slice(0, MAX_MEMBER_AVATARS).map((member) => (
                                     <Avatar
                                         key={member.id}
                                         className="h-8 w-8 border-2 border-white hover:scale-105 transition-transform"
@@ -110,9 +111,9 @@ const GroupPage = () => {
 
 
                                 {/* Extra member counter */}
-                                {members.length > 5 && (
+                                {members.length > MAX_MEMBER_AVATARS && (
                                     <div className="h-8 w-8 flex items-center justify-center bg-white/30 rounded-full text-sm font-medium border-2 border-white">
-                                        +{members.length - 5}
+                                        +{members.length - MAX_MEMBER_AVATARS}
                                     </div>
                                 )}
                             </div>

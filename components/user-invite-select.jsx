@@ -45,8 +45,7 @@ export function UserInviteSelect({
   const [searchQuery, setSearchQuery] = useState("");
   const [isInviting, setIsInviting] = useState(false);
 
-  // ALWAYS call searchUsers query - MUST generate WebSocket: users:searchUsers
-  // Pass empty string if searchQuery is empty to ensure query is always called
+  // Keep this query always active so search updates as the user types.
   const searchResults = useQuery(
     api.users.searchUsers,
     { query: searchQuery || "" }
@@ -77,11 +76,9 @@ export function UserInviteSelect({
 
     setIsInviting(true);
     try {
-      // If groupId is provided, invite to that group
       if (groupId) {
         const result = await inviteUser.mutate({ email, groupId });
         if (result.added && result.userId) {
-          // User was added directly (they existed)
           toast.success("User added!");
           onSelect({
             id: result.userId,
@@ -91,7 +88,6 @@ export function UserInviteSelect({
             isInvited: false,
           });
         } else {
-          // Invite was created (user doesn't exist)
           toast.success(`Invite sent to ${email}`);
           onSelect({
             id: `invite-${email}`, // Temporary ID for pending invites
@@ -102,8 +98,6 @@ export function UserInviteSelect({
           });
         }
       } else {
-        // No group context - just create a pending invite entry for UI
-        // This is used in expense forms where we can't create invites yet
         onSelect({
           id: `invite-${email}`,
           name: email.split("@")[0],

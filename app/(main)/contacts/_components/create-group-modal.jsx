@@ -90,13 +90,11 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
       for (const email of selectedInvites) {
         try {
           await inviteUser.mutate({ email, groupId });
-        } catch (error) {
-          console.error(`Failed to invite ${email}:`, error);
-          // Continue with other invites even if one fails
+        } catch {
+          continue;
         }
       }
 
-      console.log("Group created with ID:", groupId);
       toast.success("Group created successfully!");
       if (selectedInvites.length > 0) {
         toast.success(`Invited ${selectedInvites.length} user(s) via email`);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ const AddMemberModal = ({ isOpen, onClose, groupId, onSuccess }) => {
 
   const inviteUser = useConvexMutation(api.contacts.inviteUser);
   const addMemberToGroup = useConvexMutation(api.contacts.addMemberToGroup);
+  const handleClose = () => onClose();
 
   const handleSelect = async (user) => {
     if (!groupId) return;
@@ -27,7 +28,6 @@ const AddMemberModal = ({ isOpen, onClose, groupId, onSuccess }) => {
     setIsInviting(true);
     try {
       if (user.isInvited) {
-        // Handle invite
         const result = await inviteUser.mutate({ email: user.email, groupId });
         if (result.added) {
           toast.success("User added to group!");
@@ -35,7 +35,6 @@ const AddMemberModal = ({ isOpen, onClose, groupId, onSuccess }) => {
           toast.success(`Invite sent to ${user.email}`);
         }
       } else {
-        // Handle existing user
         await addMemberToGroup.mutate({ userId: user.id, groupId });
         toast.success("User added to group!");
       }
